@@ -3,6 +3,7 @@ Author: SENSEI
 
 Last modified: 8/14/2015
 __________________________________________________________________*/
+SEN_debug = (paramsArray select 1) isEqualTo 1;
 if (!hasInterface) exitWith {}; // headless client exit
 private "_fnc_tfarSettings";
 [] spawn compile preprocessFileLineNumbers "scripts\intro.sqf";
@@ -157,3 +158,19 @@ player createDiaryRecord ["Diary", ["Dynamic Combat Generator", "Mission by SENS
 
 // setup ACE3
 [] call compile preprocessFileLineNumbers "scripts\SEN_ACE3Actions.sqf";
+
+["SettingChanged", {
+    private ["_hasItem"];
+    params ["_name", "_value"];
+    if (_name isEqualTo "JK_Optics") then {
+        _items = (primaryWeaponItems player);
+        _hasItem = 0 != ({_x in ["optic_Hamr", "ACE_optic_Hamr_2D", "ACE_optic_Hamr_PIP"]} count (primaryWeaponItems player));
+        if (_hasItem) then {
+            _item = ["optic_Hamr", "ACE_optic_Hamr_2D", "ACE_optic_Hamr_PIP"] select _value;
+            player removePrimaryWeaponItem "optic_Hamr";
+            player removePrimaryWeaponItem "ACE_optic_Hamr_2D";
+            player removePrimaryWeaponItem "ACE_optic_Hamr_PIP";
+            player addPrimaryWeaponItem _item;
+        };
+    };
+}] call ace_common_fnc_addEventhandler;

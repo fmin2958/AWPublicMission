@@ -88,10 +88,18 @@ if (JK_primaryweaponTracers >= 1) then {
         private "_primAttachmentTemp";
         _primAttachmentTemp = (_x call BIS_fnc_selectRandom);
         if (_primAttachmentTemp != "") then {
-            _unit addPrimaryWeaponItem _primAttachmentTemp;
+            if (_primAttachmentTemp in ["optic_Hamr", "ACE_optic_Hamr_2D", "ACE_optic_Hamr_PIP"]) then {
+                _unit addPrimaryWeaponItem (["optic_Hamr", "ACE_optic_Hamr_2D", "ACE_optic_Hamr_PIP"] select JK_Optics);
+            } else {
+                _unit addPrimaryWeaponItem _primAttachmentTemp;
+            };
         };
     } else {
-        _unit addPrimaryWeaponItem _x;
+        if (_x in ["optic_Hamr", "ACE_optic_Hamr_2D", "ACE_optic_Hamr_PIP"]) then {
+            _unit addPrimaryWeaponItem (["optic_Hamr", "ACE_optic_Hamr_2D", "ACE_optic_Hamr_PIP"] select JK_Optics);
+        } else {
+            _unit addPrimaryWeaponItem _x;
+        };
     };
     nil
 } count JK_itemsPrimaryweapon;
@@ -180,7 +188,11 @@ if (name _unit in ["joko // Jonas"]) then {
     [_unit, "ACE_insignia_banana"] call BIS_fnc_setUnitInsignia;
 } else {
     if (typeName JK_insignium == "ARRAY") then {
-        [_unit, JK_insignium call BIS_fnc_selectRandom] call BIS_fnc_setUnitInsignia;
+        private "_temp";
+        _temp = (JK_insignium call BIS_fnc_selectRandom);
+        if !(_temp isEqualTo "") then {
+            [_unit, _temp] call BIS_fnc_setUnitInsignia;
+        };
     } else {
         [_unit, JK_insignium] call BIS_fnc_setUnitInsignia;
     };

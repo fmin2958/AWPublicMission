@@ -8,8 +8,6 @@
  *
  * Example:
  * [] call JK_Core_fnc_initVariableEventHandler;
- *
- * Public: No
  */
 if (isNil "JK_VariableEventhandler") then {
     JK_VariableEventhandler = [];
@@ -26,7 +24,7 @@ JK_fnc_addEHLoop = {
             _x params ["_varName", "_namespace", "_variableOld", "_code"];
             _variable = _namespace getVariable _varName;
             if !(_variable isEqualTo _variableOld) then {
-                [_varName, _variable, _namespace] call _code;
+                [_varName, _variable, _namespace, _variableOld] call _code;
                 _x set [2, _variable];
             };
             nil

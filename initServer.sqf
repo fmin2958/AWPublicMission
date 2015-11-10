@@ -4,6 +4,7 @@ Author: SENSEI
 Last modified: 8/5/2015
 __________________________________________________________________*/
 JK_DBSetup = true;
+SEN_debug = (paramsArray select 1) isEqualTo 1;
 [] spawn {
 waitUntil {!isNil "JK_DBSetup"};
 if (isNil "db_fnc_save") then {
@@ -22,7 +23,7 @@ jk_db_fnc_load = if (isNil "db_fnc_load") then {
 JK_TicketSystem = ["JK_TicketSystem", 4000, 0] call jk_db_fnc_load;
 publicVariable "JK_TicketSystem";
 
-JK_VSS_ListTickets = ["JK_VSS_ListTickets", [["test", ["rhsusf_m1025_w_s"],200,"Leader"]], 2] call jk_db_fnc_load;
+JK_VSS_ListTickets = ["JK_VSS_ListTickets", [["test", ["rhsusf_m1025_w_s"],200,["All"]]], 2] call jk_db_fnc_load;
 publicVariable "JK_VSS_ListTickets";
 
 SEN_approvalCiv = ["SEN_approvalCiv", -1500, 0] call jk_db_fnc_load;
@@ -34,10 +35,9 @@ publicVariable "SEN_blacklistLocation";
 SEN_ClearedCitys = SEN_blacklistLocation;
 publicVariable "SEN_ClearedCitys";
 
-missionNameSpace setVariable ["SEN_transportReady", 1];
 [] spawn {
     waitUntil {!isNil "SEN_debug"};
-    [1500,0,SEN_debug,2000,2500,1500] call compile preprocessFileLineNumbers "scripts\zbe_cache\main.sqf";
+    [1500,0,2000,2500,1500] call compile preprocessFileLineNumbers "scripts\zbe_cache\main.sqf";
 };
 
 if !(getMarkerColor "SEN_med_mrk" isEqualTo "") then {
@@ -47,16 +47,24 @@ if !(getMarkerColor "SEN_med_mrk" isEqualTo "") then {
     } forEach ((getMarkerPos "SEN_med_mrk") nearObjects ["House", 100]);
 };
 
-waitUntil {sleep 1; SEN_complete isEqualTo 2};
-
-[] call compile preprocessFileLineNumbers "scripts\SEN_occupyTrg.sqf";
-[] call compile preprocessFileLineNumbers "tasks\SEN_taskHandler.sqf";
 [((SEN_range*0.04) max 400),false] call compile preprocessFileLineNumbers "scripts\SEN_civ.sqf";
 [((SEN_range*0.04) max 400),((ceil (SEN_range/512)) max 10) min 25] call compile preprocessFileLineNumbers "scripts\SEN_animal.sqf";
 
 
 [["SEN_approvalCiv", "JK_TicketSystem", "SEN_ClearedCitys"], {
-    params ["_key", "_value"];
+    params ["_key", "_value", "", "_preValue"];
+    if ("JK_TicketSystem" == _key) then {
+        if (_value > _preValue) then {
+            [["SEN_ticketAdd",[floor(_value - _preValue)]],"BIS_fnc_showNotification",true] call BIS_fnc_MP;
+        } else {
+            [["SEN_ticketSubstact",[floor(_preValue - _value)]],"BIS_fnc_showNotification",true] call BIS_fnc_MP;
+        };
+    };
+    if ("SEN_approvalCiv" == _key) then {
+        if (_value > _preValue) then {
+            [["SEN_approvalBonus",[floor(_value - _preValue)]],"BIS_fnc_showNotification",true] call BIS_fnc_MP;
+        };
+    };
     [_key, str _value] spawn db_fnc_save;
 }] call JK_Core_fnc_addVariableEventHandler;
 
@@ -72,20 +80,9 @@ waitUntil {sleep 1; SEN_complete isEqualTo 2};
         } count ["JK_TicketSystem", "SEN_approvalCiv", "predefinedLocations", "iedInitialArray", "JK_iedTown", "JK_VSS_ListTickets"];
     };
 };
-};
-/*
-addMissionEventHandler ["HandleDisconnect", {
-    private ["_count", "_allPlayer"];
-    params ["_unit", "_id", "_uid", "_name"];
 
-    _allPlayer = if (isNil "SEN_HC") then {
-        allPlayers
-    } else {
-        allPlayers - [SEN_HC]
-    };
-    _count = count (_allPlayer - [_unit]);
-    if (_count == 0) then {
-        [["Won"], "BIS_fnc_endMissionServer", false] call BIS_fnc_MP;
-    };
-}];
-*/
+waitUntil {SEN_complete isEqualTo 2};
+
+[] call compile preprocessFileLineNumbers "scripts\SEN_occupyTrg.sqf";
+[] call compile preprocessFileLineNumbers "tasks\SEN_taskHandler.sqf";
+};
