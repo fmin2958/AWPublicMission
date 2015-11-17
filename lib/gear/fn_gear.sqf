@@ -1,7 +1,5 @@
 /*
 gear-adding function by joko
-Idea by Belbo
-adds the loadouts from ADV_Setup\gear\west\*.sqf to the units
 If custom content is added to the units, they possibly have to be added to _glrfls (if there are rifles with grenade launchers).
 define per cfgFunctions or from init.sqf or initPlayerLocal.sqf as early as possible via
 call JK_loadOut_fnc_gear;
@@ -28,7 +26,7 @@ removeallWeapons _unit;
 removeHeadgear _unit;
 removeBackpack _unit;
 removeVest _unit;
-{_unit removeMagazine _x} forEach magazines _unit;
+{_unit removeMagazine _x; nil} count magazines _unit;
 //...and readding. Clothing:
 _unit forceAddUniform _uniform;
 _unit addVest _vest;

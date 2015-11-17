@@ -3,12 +3,12 @@ TRIGGER_STATUS_LOOP = {
     params ["_iedPosition", "_sectionDictionary", "_sectionName", "_iedName", "_iedSize"];
 
     _triggerActive = false;
-    while{true} do {
+    while {true} do {
         _nearEntitiesCount = count (_iedPosition nearEntities [["CAManBase","LandVehicle"], 250]);
 
-        if(! _triggerActive && {_nearEntitiesCount > 0}) then {
+        if (! _triggerActive && {_nearEntitiesCount > 0}) then {
             _triggerActive = true;
-            if(SEN_debug) then { hintSilent "Trigger Created" };
+            if (SEN_debug) then { hintSilent "Trigger Created" };
 
             _trigger = createTrigger["EmptyDetector", _iedPosition];
             _trigger setTriggerArea[11,11,0,true];
@@ -19,9 +19,8 @@ TRIGGER_STATUS_LOOP = {
                         ""];
 
             [_sectionDictionary, _iedName, _trigger] call ADD_TRIGGER_TO_IED;
-        }
-        else {
-            if(_triggerActive && {_nearEntitiesCount == 0}) then {
+        } else {
+            if (_triggerActive && {_nearEntitiesCount == 0}) then {
                 _triggerActive = false;
                 if(SEN_debug) then { hintSilent "Trigger deleted"; };
                 [_sectionDictionary, _iedName] call REMOVE_TRIGGER_FROM_IED;
@@ -63,8 +62,8 @@ TRIGGER_CHECK = {
                 };
             };
         };
-
-    } foreach (_thisList);
+        nil
+    } count (_thisList);
 
     if(SEN_debug && _validItemsInTrigger > 0) then {
         hintSilent format["Trigger\nPeople/Vehicles in trigger = %1\nMax Speed = %2\nMin Height = %3\nDistance = %4", _validItemsInTrigger,_maxSpeed, _minHeight,_minDistance];
