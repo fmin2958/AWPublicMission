@@ -87,6 +87,12 @@
 "RHS_C130J",
 "RHS_A10"
 
+"MELB_AH6M_H",
+"MELB_AH6M_L",
+"MELB_AH6M_M",
+"MELB_MH6M",
+"MELB_H6M"
+
 // Support
 "B_Truck_01_Repair_F",
 "B_Truck_01_ammo_F",
@@ -95,3 +101,9 @@
 "C_Offroad_01_repair_F",
 "rhsusf_m113_usarmy_supply",
 "B_APC_Tracked_01_CRV_F"
+
+// UAV
+"B_UAV_02_F",
+"B_UAV_02_CAS_F",
+"B_UGV_01_F",
+"B_UGV_01_rcws_F"
